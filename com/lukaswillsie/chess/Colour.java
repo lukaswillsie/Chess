@@ -1,4 +1,4 @@
-package game;
+package Chess.com.lukaswillsie.game;
 
 /**
  * An enum representing the possible colours a chess piece can have

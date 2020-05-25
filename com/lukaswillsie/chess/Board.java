@@ -1,4 +1,4 @@
-package game;
+package Chess.com.lukaswillsie.game;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
