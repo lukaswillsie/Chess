@@ -14,7 +14,7 @@ public class Bishop extends Piece {
 	// about the type of a piece, when we don't care about colour. For example, when a player wants to
 	// promote a pawn, they pass in a character as an argument to specify what they want their pawn to
 	// promote to, and that character is checked against each piece's charRep
-	public static final char charRep = 'b';
+	public static final char charRep = 'z';
 	
 	/**
 	 * Create a new Bishop of the given colour, at the given location on the given Board.
