@@ -1,4 +1,4 @@
-package Chess.com.lukaswillsie.game;
+package Chess.com.lukaswillsie.chess;
 
 import java.io.File;
 import java.io.FileOutputStream;
