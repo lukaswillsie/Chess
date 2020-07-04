@@ -612,6 +612,57 @@ public class Board {
 	}
 	
 	/**
+	 * Return this Board's "save data." That is, what the contents of this board's save file
+	 * would be if saveGame() were called at this moment, where each item in the returned list
+	 * is a line of the file
+	 * 
+	 * @return A List of Strings, each corresponding to a line of what this board's save file
+	 * would look like if saved right now
+	 */
+	public List<String> getSaveData() {
+		List<String> data = new ArrayList<String>();
+		data.add(this.whiteCanQueensideCastle ? "1" : "0");
+		
+		data.add(this.whiteCanKingsideCastle ? "1" : "0");
+		
+		data.add(this.blackCanQueensideCastle ? "1" : "0");
+		
+		data.add(this.blackCanKingsideCastle ? "1" : "0");
+		
+		for(int row = 7; row >= 0; row--) {
+			StringBuilder line = new StringBuilder();
+			for(int column = 0; column < 8; column++) {
+				Piece piece = this.getPiece(row, column);
+				if(piece instanceof Pawn) {
+					line.append(piece.getColour() == Colour.WHITE ? "P" : "p");
+				}
+				else if(piece instanceof Rook) {
+					line.append(piece.getColour() == Colour.WHITE ? "R" : "r");
+				}
+				else if(piece instanceof Knight) {
+					line.append(piece.getColour() == Colour.WHITE ? "N" : "n");
+				}
+				else if(piece instanceof Bishop) {
+					line.append(piece.getColour() == Colour.WHITE ? "B" : "b");
+				}
+				else if(piece instanceof Queen) {
+					line.append(piece.getColour() == Colour.WHITE ? "Q" : "q");
+				}
+				else if(piece instanceof King) {
+					line.append(piece.getColour() == Colour.WHITE ? "K" : "k");
+				}
+				else {
+					line.append("X");
+				}
+			}
+			data.add(line.toString());
+		}
+		data.add(this.turn == Colour.WHITE ? "0" : "1");
+		
+		return data;
+	}
+	
+	/**
 	 * Compute whether or not the given colour is in check. Assumes that
 	 * the given colour has one and only one King on the board.
 	 * 
