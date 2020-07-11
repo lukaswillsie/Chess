@@ -176,7 +176,7 @@ public class Board {
 	 * to destSquare. Fails and returns 1 if the given move is invalid;
 	 * i.e. if the move is not in the Piece at srcSquares getMoves(), or if
 	 * there is no piece at srcSquare
-	 * @return -1 if the move is successfully made, and a promotion is now required <>
+	 * @return -1 if the move is successfully made, and a promotion is now required <br>
 	 * 			0 if the move is successfully made <br>
 	 * 		   	1 if the move is invalid (source square is empty, move is not valid for
 	 * 		   	the piece at srcSquare, etc.) <br>
@@ -779,6 +779,26 @@ public class Board {
 		// moves at all
 		return this.getKing(colour) != null
 			&& this.getMoves(colour).size() == 0;
+	}
+	
+	/**
+	 * Compute whether or not the game is in a stalemate.
+	 * 
+	 * @return true if and only if the game is in stalemate, and the player whose turn it
+	 * currently is has no legal moves, but isn't in check
+	 */
+	public boolean isStalemate() {
+		// Stalemate is when the player whose turn it is has no legal moves and is not in
+		// check. Subtly, we also need to check that a promotion isn't required. For example,
+		// suppose white has an un-promoted pawn on the back row, and a king who is surrounded
+		// by attackers and can't move. Then, because the promotion hasn't happened, the Board
+		// will think that it's white's turn. It will also think that white has no moves, because
+		// they don't, and that white isn't in check, because they aren't. But this isn't a 
+		// stalemate, because white will promote and then it will be black's turn and the game
+		// will proceed (though I don't love white's chances)
+		return 		this.needsToBePromoted == null
+				&& 	this.getMoves(turn).size() == 0
+				&& 	!this.isCheck(turn);
 	}
 	
 	/**
