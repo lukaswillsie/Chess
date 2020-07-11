@@ -209,13 +209,24 @@ public class Board {
 					// A kingside castle is characterized by a two-square
 					// move to the right by a king
 					if(destSquare.second() - srcSquare.second() == 2) {
-						return this.kingsideCastle(piece.getColour());
+						int result = this.kingsideCastle(piece.getColour());
+						if(result == 0) {
+							this.turn = (this.turn == Colour.WHITE) ? Colour.BLACK : Colour.WHITE;
+						}
+						
+						return result;
 					}
 					// A queenside castle is characterized by a two-square
 					// move to the left by a king
 					else if (destSquare.second() - srcSquare.second() == -2) {
-						return this.queensideCastle(piece.getColour());
+						int result = this.queensideCastle(piece.getColour());
+						if(result == 0) {
+							this.turn = (this.turn == Colour.WHITE) ? Colour.BLACK : Colour.WHITE;
+						}
+						
+						return result;
 					}
+					
 					// Otherwise, white can't castle anymore because the King
 					// has moved and we need to record this before proceeding
 					else {
@@ -355,8 +366,17 @@ public class Board {
 		
 		board[rook.getRow()][rook.getColumn()] = null;
 		board[king.getRow()][king.getColumn()+1] = rook;
-		
 		rook.move(king.getRow(), king.getColumn()+1);
+		
+		// Record that whoever just castled can't castle again in the future
+		if(colour == Colour.WHITE) {
+			this.whiteCanKingsideCastle = false;
+			this.whiteCanQueensideCastle = false;
+		}
+		else {
+			this.blackCanKingsideCastle = false;
+			this.blackCanQueensideCastle = false;
+		}
 		return 0;
 	}
 	
@@ -394,8 +414,17 @@ public class Board {
 		
 		board[rook.getRow()][rook.getColumn()] = null;
 		board[king.getRow()][king.getColumn()-1] = rook;
-		
 		rook.move(king.getRow(), king.getColumn()-1);
+		
+		// Record that whoever just castled can't castle again in the future
+		if(colour == Colour.WHITE) {
+			this.whiteCanKingsideCastle = false;
+			this.whiteCanQueensideCastle = false;
+		}
+		else {
+			this.blackCanKingsideCastle = false;
+			this.blackCanQueensideCastle = false;
+		}
 		return 0;
 	}
 	
@@ -964,13 +993,11 @@ public class Board {
 		// First check that the given colour's King and queenside Rook haven't moved
 		boolean piecesHaventMoved = (colour == Colour.WHITE) ? this.whiteCanQueensideCastle : this.blackCanQueensideCastle;
 		if(!piecesHaventMoved) {
-			System.out.println("Can't Queenside castle because pieces have moved");
 			return false;
 		}
 		
 		Piece king = this.getKing(colour);
 		if(king == null) {
-			System.out.println("Can't castle because no king");
 			return false;
 		}
 		
@@ -1014,13 +1041,11 @@ public class Board {
 		// First check that the given colour's King and queenside Rook haven't moved
 		boolean piecesHaventMoved = (colour == Colour.WHITE) ? this.whiteCanKingsideCastle : this.blackCanKingsideCastle;
 		if(!piecesHaventMoved) {
-			System.out.println("Can't castle because pieces have moved");
 			return false;
 		}
 		
 		Piece king = this.getKing(colour);
 		if(king == null) {
-			System.out.println("Can't castle because no king");
 			return false;
 		}
 		// We need to check 3 things:
