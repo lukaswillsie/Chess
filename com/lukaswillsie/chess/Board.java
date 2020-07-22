@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
+import com.lukaswillsie.utility.Log;
+
 /**
  * Represents a chessboard. Can be initialized through use of the
  * initialize() method. See below for details. <br>
@@ -553,6 +555,7 @@ public class Board {
 						break;
 					case 'e':
 						this.enPassant = new Pair(row, column);
+						break;
 					default:
 						return 1;
 						
@@ -630,6 +633,10 @@ public class Board {
 					line = (piece.getColour() == Colour.WHITE) ? "K" : "k";
 					stream.write(line.getBytes());
 				}
+				else if(new Pair(row,column).equals(this.enPassant)) {
+					line = "E";
+					stream.write(line.getBytes());
+				}
 				else {
 					stream.write("X".getBytes());
 				}
@@ -680,6 +687,9 @@ public class Board {
 				}
 				else if(piece instanceof King) {
 					line.append(piece.getColour() == Colour.WHITE ? "K" : "k");
+				}
+				else if(new Pair(row,column).equals(this.enPassant)) {
+					line.append("E");
 				}
 				else {
 					line.append("X");
@@ -733,6 +743,9 @@ public class Board {
 				}
 				else if(piece instanceof King) {
 					line.append(piece.getColour() == Colour.WHITE ? "K" : "k");
+				}
+				else if(new Pair(row,column).equals(this.enPassant)) {
+					line.append("E");
 				}
 				else {
 					line.append("X");
