@@ -464,7 +464,8 @@ public class Board {
 	/**
 	 * Access a particular square on the board
 	 * 
-	 * Precondition: row and column satisfy validSquare(row, column)
+	 * Precondition: row and column satisfy validSquare(row, column). Equivalently, both row and
+	 * column are greater than or equal to 0 and less than or equal to 7.
 	 * 
 	 * @param row - The row to access
 	 * @param column - The column to access
