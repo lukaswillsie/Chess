@@ -1036,8 +1036,7 @@ public class Board {
 		// We need to check 3 things:
 		// 1) That the King isn't in check
 		// 2) That all the squares between the King and Rook are empty
-		// 3) That none of the squares between the King and Rook are being
-		//	  attacked by the enemy colour
+		// 3) That none of the squares the King will move over are being attacked by the enemy
 		boolean check = this.isCheck(colour);
 		if(check) {
 			return false;
@@ -1047,13 +1046,17 @@ public class Board {
 		List<Pair> enemyProtectedSquares = this.getProtectedSquares(enemyColour);
 		
 		// Iterate to the left of the King until just short of the Rook (who we know hasn't moved),
-		// making sure that every square is empty and un-assailed by the enemy
+		// making sure that every square is empty and that the squares the King will pass through
+		// are unassailed by the enemy
 		int row = king.getRow();
 		int column = king.getColumn()-1;
 		while(column > 0) {
-			if(!isEmpty(row, column)
-			||  Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
-				System.out.println("Can't castle because " + new Pair(row,column) + " is not empty or is attacked");
+			if(!isEmpty(row, column)) {
+				System.out.println("Can't castle because " + new Pair(row,column) + " is not empty");
+				return false;
+			}
+			else if(king.getColumn() - column <= 2 && Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
+				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
 				return false;
 			}
 			column -= 1;
@@ -1083,8 +1086,7 @@ public class Board {
 		// We need to check 3 things:
 		// 1) That the King isn't in check
 		// 2) That all the squares between the King and Rook are empty
-		// 3) That none of the squares between the King and Rook are being
-		//	  attacked by the enemy colour
+		// 3) That none of the squares the King will move over are being attacked by the enemy
 		boolean check = this.isCheck(colour);
 		if(check) {
 			return false;
@@ -1094,13 +1096,17 @@ public class Board {
 		List<Pair> enemyProtectedSquares = this.getProtectedSquares(enemyColour);
 		
 		// Iterate to the right of the King until just short of the Rook (who we know hasn't moved),
-		// making sure that every square is empty and un-attacked by the enemy
+		// making sure that every square is empty and that the squares the King will pass through
+		// are unassailed by the enemy
 		int row = king.getRow();
 		int column = king.getColumn()+1;
 		while(column < 7) {
-			if(!isEmpty(row, column)
-			||  Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
-				System.out.println("Can't castle because " + new Pair(row, column) + " is not empty or is attacked");
+			if(!isEmpty(row, column)) {
+				System.out.println("Can't castle because " + new Pair(row, column) + " is not empty");
+				return false;
+			}
+			else if(column - king.getColumn() <= 2 && Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
+				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
 				return false;
 			}
 			column += 1;
