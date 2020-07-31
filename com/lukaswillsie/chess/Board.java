@@ -94,7 +94,7 @@ public class Board {
 	// a move is limited to one turn. After a move is made, it should be
 	// reset to null. If that move was a pawn's initial double move,
 	// this should be updated accordingly
-	public Pair enPassant;
+	private Pair enPassant;
 	
 	// Booleans that partially track whether or not white/black has the ability to castle.
 	// Specifically, <colour>CanQueensideCastle means that <colour>'s King hasn't
@@ -1349,7 +1349,8 @@ public class Board {
 	 * 
 	 * @param square - The square under consideration
 	 * @param pawn - The pawn under consideration
-	 * @return true if and only if 
+	 * @return true if and only if the given pawn can move to the given square as 
+	 * part of a valid en passant capture
 	 */
 	public boolean isEnPassant(Pair square, Pawn pawn) {
 		if(pawn.getColour() == Colour.WHITE) {
