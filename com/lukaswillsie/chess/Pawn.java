@@ -52,14 +52,14 @@ public class Pawn extends Piece {
 			// Check the square directly in front of the pawn
 			if(board.isEmpty(this.row+direction, this.column)) {
 				moves.add(new Pair(this.row+direction, this.column));
-			}
-			
-			if(this.canDoubleMove()) {
-				// Check the square two squares in front of the pawn
-				if(board.isEmpty(this.row+(2*direction), this.column)) {
-					moves.add(new Pair(this.row+(2*direction), this.column));
+				
+				if(this.canDoubleMove()) {
+					// Check the square two squares in front of the pawn
+					if(board.isEmpty(this.row+(2*direction), this.column)) {
+						moves.add(new Pair(this.row+(2*direction), this.column));
+					}
 				}
-			}
+			}			
 			
 			// Check the square in front and to the right (from white's perspective)
 			// of the pawn to see if it has an enemy on it, or is an en passant square
