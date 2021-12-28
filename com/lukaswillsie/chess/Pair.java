@@ -1,4 +1,4 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
 
 /**
  * Represents a pair of integers, with a first entry and a second entry.

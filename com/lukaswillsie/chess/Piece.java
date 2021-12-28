@@ -1,4 +1,4 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
 
 import java.util.List;
 
@@ -119,5 +119,13 @@ public abstract class Piece {
 	 */
 	public Colour getColour() {
 		return this.colour;
+	}
+
+	/**
+	 * Get this piece's square
+	 * @return This piece's square
+	 */
+	public Pair getSquare() {
+		return new Pair(row, column);
 	}
 }

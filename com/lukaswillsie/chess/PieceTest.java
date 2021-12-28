@@ -1,4 +1,8 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
+
+import com.lukaswillsie.chess.engine.Engine;
+import com.lukaswillsie.chess.engine.EngineOutput;
+import com.lukaswillsie.chess.engine.Evaluation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +29,7 @@ public class PieceTest {
 		 * print checkmate - checkmate colour
 		 * move piece - move row,col->row,col
 		 * promote pawn - promote charRep
+		 * have engine make move (a game must already be loaded) - engine
 		 */
 		while(!input.equalsIgnoreCase("q")) {
 			String[] splitted = input.split(" ");
@@ -72,7 +77,7 @@ public class PieceTest {
 				try {
 					int row = Integer.parseInt(rest.split(",")[0]);
 					int column = Integer.parseInt(rest.split(",")[1]);
-					Piece piece = board.getPiece(row, column);	
+					Piece piece = board.getPiece(row, column);
 					if(piece == null) {
 						System.out.println("There is no piece at that location");
 					}
@@ -131,9 +136,11 @@ public class PieceTest {
 			}
 			else if(command.equals("move")) {
 				try {
-					Pair src = new Pair(Integer.parseInt(rest.split("->")[0].split(",")[0]), Integer.parseInt(rest.split("->")[0].split(",")[1]));
-					Pair dest = new Pair(Integer.parseInt(rest.split("->")[1].split(",")[0]), Integer.parseInt(rest.split("->")[1].split(",")[1]));
-					
+					String[] splat = rest.split("->");
+					Pair src = parseChessNotation(splat[0]);
+					Pair dest = parseChessNotation(splat[1]);
+					System.out.println(src);
+
 					int result = board.move(src, dest);
 					switch(result) {
 						case -1:
@@ -182,6 +189,39 @@ public class PieceTest {
 					System.out.println("Game could not be saved");
 				}
 			}
+			else if(command.equals("engine")) {
+				try {
+					EngineOutput engineOutput = Engine.minimax(board.getTurn(), board, 0, 3);
+					board.move(engineOutput.getSrcSquare(), engineOutput.getDestSquare());
+					System.out.println("Move executed");
+					System.out.println(board);
+					System.out.println(engineOutput.getEvaluation());
+				}
+				catch (NullPointerException e) {
+					e.printStackTrace();
+					System.out.println("A game must be loaded first");
+				}
+			}
+			else if(command.equals("alphabeta")) {
+				try {
+					EngineOutput engineOutput = Engine.alphaBeta(
+							board.getTurn(),
+							board,
+							0,
+							3,
+							Evaluation.winEvaluation(Colour.BLACK),
+							Evaluation.winEvaluation(Colour.WHITE)
+					);
+					board.move(engineOutput.getSrcSquare(), engineOutput.getDestSquare());
+					System.out.println("Move executed");
+					System.out.println(board);
+					System.out.println(engineOutput.getEvaluation());
+				}
+				catch (NullPointerException e) {
+					e.printStackTrace();
+					System.out.println("A game must be loaded first");
+				}
+			}
 			else {
 				System.out.println("Invalid command");
 			}
@@ -208,5 +248,11 @@ public class PieceTest {
 			}
 			System.out.println();
 		}
+	}
+
+	private static Pair parseChessNotation(String s) {
+		char column = s.charAt(0);
+		char row = s.charAt(1);
+		return new Pair(((int) row) - ((int) '1'), ((int) column) - ((int) 'a'));
 	}
 }

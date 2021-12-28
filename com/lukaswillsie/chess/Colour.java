@@ -1,4 +1,4 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
 
 /**
  * An enum representing the possible colours a chess piece can have
@@ -7,5 +7,9 @@ package Chess.com.lukaswillsie.chess;
  */
 public enum Colour {
 	WHITE,
-	BLACK
+	BLACK;
+
+	public Colour flip() {
+		return this == WHITE ? BLACK : WHITE;
+	}
 }

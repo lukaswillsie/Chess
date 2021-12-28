@@ -1,4 +1,4 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
 
 import java.util.ArrayList;
 import java.util.List;

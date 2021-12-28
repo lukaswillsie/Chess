@@ -1,11 +1,8 @@
-package Chess.com.lukaswillsie.chess;
+package com.lukaswillsie.chess;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Represents a chessboard. Can be initialized through use of the
@@ -66,7 +63,7 @@ import java.util.Scanner;
  * 
  * @author Lukas Willsie
  */
-public class Board {
+public class Board implements Iterable<Piece[]> {
 	// Represents an actual chessboard as an 8x8 matrix
 	// of pieces (null for empty squares). board[0] is the
 	// bottom row of the chessboard, from white's perspective,
@@ -79,7 +76,11 @@ public class Board {
 	
 	// A list of all black Pieces currently on the board
 	private List<Piece> blackPieces;
-	
+
+	public Colour getTurn() {
+		return turn;
+	}
+
 	// Keeps track of what colour's turn it is. Is set when a game is loaded in through
 	// the initialize() method. This information is stored in a game's board data file
 	// as a 1 or 0; 1 means it's black's turn, 0 means it's white's turn
@@ -266,7 +267,7 @@ public class Board {
 					pieceList.remove(dest);
 				}
 				// If this is an en passant capture
-				else if (destSquare.equals(this.enPassant)) {
+				else if (destSquare.equals(this.enPassant) && piece instanceof Pawn) {
 					Colour enemyColour = (piece.getColour() == Colour.WHITE) ? Colour.BLACK : Colour.WHITE;
 					int direction = (enemyColour == Colour.WHITE) ? 1 : -1;
 					
@@ -482,13 +483,13 @@ public class Board {
 	 * @param scanner - A Scanner open to the beginning of a valid board data file
 	 * @return 0 if the initialization succeeded and no invalid input was encountered, 1 if otherwise
 	 */
-	public int initialize(Scanner scanner) {
+	public int initialize(Iterator<String> scanner) {
 		String line;
 
 		int lineNumber = 0;
 		// Read in the castle booleans
-		while(lineNumber < 4 && scanner.hasNextLine()) {
-			line = scanner.nextLine();
+		while(lineNumber < 4 && scanner.hasNext()) {
+			line = scanner.next();
 			
 			try {
 				int bool = Integer.parseInt(line);
@@ -521,8 +522,8 @@ public class Board {
 		int column = 0;
 		// Read the next 8 lines as rows of the chessboard, parsing each character
 		// individually and adding pieces as we go.
-		while(scanner.hasNextLine() && row >= 0) {
-			line = scanner.nextLine();
+		while(scanner.hasNext() && row >= 0) {
+			line = scanner.next();
 			while(column < 8) {
 				Colour colour = Character.isLowerCase(line.charAt(column)) ? Colour.BLACK : Colour.WHITE;
 				switch((line.toLowerCase()).charAt(column)) {
@@ -565,7 +566,7 @@ public class Board {
 		}
 		
 		// Initialize the turn variable
-		line = scanner.nextLine();
+		line = scanner.next();
 		try {
 			int turn = Integer.parseInt(line);
 			if(turn > 1 || turn < 0) {
@@ -1052,11 +1053,11 @@ public class Board {
 		int column = king.getColumn()-1;
 		while(column > 0) {
 			if(!isEmpty(row, column)) {
-				System.out.println("Can't castle because " + new Pair(row,column) + " is not empty");
+//				System.out.println("Can't castle because " + new Pair(row,column) + " is not empty");
 				return false;
 			}
 			else if(king.getColumn() - column <= 2 && Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
-				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
+//				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
 				return false;
 			}
 			column -= 1;
@@ -1102,17 +1103,17 @@ public class Board {
 		int column = king.getColumn()+1;
 		while(column < 7) {
 			if(!isEmpty(row, column)) {
-				System.out.println("Can't castle because " + new Pair(row, column) + " is not empty");
+//				System.out.println("Can't castle because " + new Pair(row, column) + " is not empty");
 				return false;
 			}
 			else if(column - king.getColumn() <= 2 && Collections.binarySearch(enemyProtectedSquares, new Pair(row, column)) >= 0) {
-				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
+//				System.out.println("Can't castle because " + new Pair(row,column) + " is protected by an enemy");
 				return false;
 			}
 			column += 1;
 		}
 		
-		System.out.println("Can kingside castle");
+//		System.out.println("Can kingside castle");
 		return true;
 	}
 	
@@ -1449,5 +1450,32 @@ public class Board {
 		}
 		
 		return rep.toString();
+	}
+
+	@Override
+	public Iterator<Piece[]> iterator() {
+		return new BoardIterator();
+	}
+
+	private final class BoardIterator implements Iterator<Piece[]> {
+		int row = 0;
+
+		@Override
+		public boolean hasNext() {
+			return row < 8;
+		}
+
+		@Override
+		public Piece[] next() {
+			// TODO: Improve iterator to not return direct references to Pieces
+			return Arrays.copyOf(board[row], board[row++].length);
+		}
+	}
+
+	// TODO: Make better and break up this awful god-forsaken God Class
+	public final Board copy() {
+		Board cloned =  new Board();
+		cloned.initialize(getSaveFile().iterator());
+		return cloned;
 	}
 }
