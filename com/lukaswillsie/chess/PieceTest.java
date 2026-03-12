@@ -3,6 +3,10 @@ package com.lukaswillsie.chess;
 import com.lukaswillsie.chess.engine.Engine;
 import com.lukaswillsie.chess.engine.EngineOutput;
 import com.lukaswillsie.chess.engine.Evaluation;
+import com.lukaswillsie.chess.logic.Board;
+import com.lukaswillsie.chess.logic.Colour;
+import com.lukaswillsie.chess.logic.Pair;
+import com.lukaswillsie.chess.logic.Piece;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,7 +65,7 @@ public class PieceTest {
 				try {
 					int row = Integer.parseInt(rest.split(",")[0]);
 					int column = Integer.parseInt(rest.split(",")[1]);
-					Piece piece = board.getPiece(row, column);	
+					Piece piece = board.getPiece(row, column);
 					if(piece == null) {
 						System.out.println("There is no piece at that location");
 					}
@@ -151,6 +155,7 @@ public class PieceTest {
 						case 0:
 							System.out.println(board);
 							System.out.println("Move executed");
+							resetMemoized(board);
 							break;
 						case 1:
 							System.out.println(board);
@@ -191,8 +196,17 @@ public class PieceTest {
 			}
 			else if(command.equals("engine")) {
 				try {
-					EngineOutput engineOutput = Engine.minimax(board.getTurn(), board, 0, 3);
+					EngineOutput engineOutput = Engine.alphaBeta(
+						board.getTurn(),
+						board,
+						0,
+						4,
+						Evaluation.winEvaluation(Colour.BLACK),
+						Evaluation.winEvaluation(Colour.WHITE)
+					);
 					board.move(engineOutput.getSrcSquare(), engineOutput.getDestSquare());
+					resetMemoized(board);
+					System.out.println(engineOutput.getSrcSquare() + "->" + engineOutput.getDestSquare());
 					System.out.println("Move executed");
 					System.out.println(board);
 					System.out.println(engineOutput.getEvaluation());
@@ -208,11 +222,12 @@ public class PieceTest {
 							board.getTurn(),
 							board,
 							0,
-							3,
+							4,
 							Evaluation.winEvaluation(Colour.BLACK),
 							Evaluation.winEvaluation(Colour.WHITE)
 					);
 					board.move(engineOutput.getSrcSquare(), engineOutput.getDestSquare());
+					resetMemoized(board);
 					System.out.println("Move executed");
 					System.out.println(board);
 					System.out.println(engineOutput.getEvaluation());
@@ -229,6 +244,16 @@ public class PieceTest {
 			input = in.nextLine();
 		}
 		in.close();
+	}
+
+	private static void resetMemoized(Board board) {
+		for(Piece[] row : board) {
+			for (Piece piece : row) {
+				if (piece != null) {
+					piece.resetMemoize();
+				}
+			}
+		}
 	}
 	
 	public static void printMoves(Board board, List<Pair> moves) {

@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 /**
  * Represents a pair of integers, with a first entry and a second entry.
@@ -15,25 +15,17 @@ package com.lukaswillsie.chess;
  */
 public class Pair implements Comparable<Pair> {
 	// Store this objects first and second entries
-	private int firstElement;
-	private int secondElement;
+	public final int first;
+	public final int second;
 	
 	/**
 	 * Create a new Pair with the given initial first and second entries
-	 * @param first - the initial first entry of this pair
-	 * @param second - the initial second entry of this pair
+	 * @param firstElement - the initial first entry of this pair
+	 * @param secondElement - the initial second entry of this pair
 	 */
-	public Pair(int first, int second) {
-		this.firstElement = first;
-		this.secondElement = second;
-	}
-	
-	/**
-	 * Set this Pair's first entry
-	 * @param firstElem - this Pair's new first entry 
-	 */
-	public void setFirst(int firstElem) {
-		this.firstElement = firstElem;
+	public Pair(int firstElement, int secondElement) {
+		this.first = firstElement;
+		this.second = secondElement;
 	}
 	
 	/**
@@ -41,16 +33,7 @@ public class Pair implements Comparable<Pair> {
 	 * @return This Pair's first entry
 	 */
 	public int first() {
-		return this.firstElement;
-	}
-	
-	/**
-	 * Set this Pair's second entry.
-	 * 
-	 * @param secondElem - this Pair's new second entry 
-	 */
-	public void setSecond(int secondElem) {
-		this.secondElement = secondElem;
+		return this.first;
 	}
 	
 	/**
@@ -59,7 +42,7 @@ public class Pair implements Comparable<Pair> {
 	 * @return This Pair's second entry
 	 */
 	public int second() {
-		return this.secondElement;
+		return this.second;
 	}
 	
 	/**
@@ -68,7 +51,7 @@ public class Pair implements Comparable<Pair> {
 	 *"(first,second)"
 	 */
 	public String toString() {
-		return "(" + this.firstElement + ", " + this.secondElement + ")";
+		return "(" + this.first + ", " + this.second + ")";
 	}
 	
 	/**

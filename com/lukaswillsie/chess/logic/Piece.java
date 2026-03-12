@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.util.List;
 
@@ -24,6 +24,12 @@ public abstract class Piece {
 	
 	// The Board of which this piece is a member
 	protected Board board;
+
+	private List<Pair> storedMoves;
+	private List<Pair> storedProtectedSquares;
+
+	private boolean isCheckingKing;
+	private boolean isCheckingKingMemoized;
 	
 	/**
 	 * Create a new Piece of the given colour, at the given location on the given Board.
@@ -42,52 +48,103 @@ public abstract class Piece {
 		this.colour = colour;
 		this.board = board;
 	}
-	
+
 	/**
-	 * Compute where this piece can move to on the board
-	 * 
-	 * @return A List of pairs (row,column), where each pair represents
-	 * a square that this piece can move to, according to its rules of movement
+	 * Compute the squares that this piece can move to on the board
 	 */
 	public abstract List<Pair> getMoves();
 	
 	/**
-	 * Compute all squares that this piece is PROTECTING. A protected
+	 * Compute and return where this piece can move to on the board, optionally
+	 * memoizing the result for later retrieval.
+	 * 
+	 * @return A List of pairs (row,column), where each pair represents
+	 * a square that this piece can move to, according to its rules of movement
+	 */
+	public List<Pair> getMoves(boolean memoize) {
+		if(!memoize) {
+			return getMoves();
+		}
+		else {
+			if (storedMoves == null) {
+				storedMoves = getMoves();
+			}
+			return storedMoves;
+		}
+	}
+
+	/**
+	 * Compute and return all squares that this piece is PROTECTING. A protected
 	 * square is a square that this piece is preventing the enemy king
 	 * from moving to. In other words, it's a square that the enemy
 	 * king can't move to, lest he put himself in check, but that he
 	 * otherwise might be able to move to.
-	 * 
+	 *
 	 * For example, this might be a square the piece can move to,
 	 * or a square occupied by an allied piece who this piece is protecting,
 	 * or it might be a square diagonal to a pawn (the pawn can't move there,
 	 * but it's neither can the enemy king, thanks to the pawn).
-	 * 
+	 *
 	 * @return A list of Pairs, where each pair represents a square protected by
 	 * this piece
 	 */
 	public abstract List<Pair> getProtectedSquares();
 	
 	/**
-	 * Compute whether or not this piece is giving check to the enemy King. Note that this is
-	 * a little subtle. The piece does not have to actually be able to capture the enemy King
-	 * to be attacking it. As an example, a pinned piece that can't actually move at all can still
-	 * be giving check. To demonstrate:
-	 * 
+	 * Compute and return all squares that this piece is PROTECTING. Optionally memoize
+	 * the result for quick retrieval later. If <code>memoize=false</code>, is an alias
+	 * for getProtectedSquares().
+	 */
+	public List<Pair> getProtectedSquares(boolean memoize) {
+		if(!memoize) {
+			return getProtectedSquares();
+		}
+		else {
+			if (storedProtectedSquares == null) {
+				storedProtectedSquares = getProtectedSquares();
+			}
+			return storedProtectedSquares;
+		}
+	}
+
+	/**
+	 * Compute and return whether or not this piece is giving check to the enemy King. Note that
+	 * this is a little subtle. The piece does not have to actually be able to capture the enemy
+	 * King to be attacking it. As an example, a pinned piece that can't actually move at all
+	 * can still be giving check. To demonstrate:
+	 *
 	 * kXX
 	 * XrX
 	 * XXB
 	 * XKX
-	 * 
+	 *
 	 * Here, the black Rook is pinned by the white Bishop, and can't move at all. That is, its
 	 * getMoves() would return an empty list. But white is still in check because the black
-	 * Rook and white King are in the same column. 
+	 * Rook and white King are in the same column.
 	 * @return true if and only if this piece is giving check to the enemy king
 	 */
 	public abstract boolean isCheckingKing();
+
+	/**
+	 * Compute and memoize (in the isCheckingKing field) whether or not this piece is
+	 * checking the enemy king.
+	 */
+	public boolean isCheckingKing(boolean memoize) {
+		if(!memoize) {
+			return isCheckingKing();
+		}
+		else{
+			if(!isCheckingKingMemoized) {
+				isCheckingKing = isCheckingKing();
+				isCheckingKingMemoized = true;
+			}
+			return isCheckingKing;
+		}
+
+	}
 	
 	/**
-	 * Inform this piece that its location on board has changed
+	 * Inform this piece that its location on the board has changed
 	 * @param row - the piece's new row
 	 * @param column - the piece's new column
 	 */
@@ -127,5 +184,11 @@ public abstract class Piece {
 	 */
 	public Pair getSquare() {
 		return new Pair(row, column);
+	}
+
+	public void resetMemoize() {
+		storedMoves = null;
+		storedProtectedSquares = null;
+		isCheckingKingMemoized = false;
 	}
 }

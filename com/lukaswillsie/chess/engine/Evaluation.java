@@ -1,6 +1,6 @@
 package com.lukaswillsie.chess.engine;
 
-import com.lukaswillsie.chess.Colour;
+import com.lukaswillsie.chess.logic.Colour;
 
 public class Evaluation implements Comparable<Evaluation> {
     private final float score;

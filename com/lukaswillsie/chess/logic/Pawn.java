@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.util.ArrayList;
 import java.util.List;

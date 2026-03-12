@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,8 @@ public class Queen extends Piece {
 			// The Queen can only move toward and away from the pinning piece
 			// without exposing its King. Determine what direction constitutes
 			// "toward" the pinning piece
-			int rowDirection = sign(pinner.getRow() - pinner.getColumn());
-			int columnDirection = sign(pinner.getColumn() - pinner.getColumn());
+			int rowDirection = sign(pinner.getRow() - this.row);
+			int columnDirection = sign(pinner.getColumn() - this.column);
 			
 			List<Pair> moves = new ArrayList<Pair>();
 			

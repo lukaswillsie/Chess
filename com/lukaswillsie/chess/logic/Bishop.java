@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +30,9 @@ public class Bishop extends Piece {
 	public Bishop(int row, int column, Colour colour, Board board) {
 		super(row, column, colour, board);
 	}
-	
+
 	/**
-	 * Compute where this piece can move to on the board
-	 * 
-	 * @return A List of pairs (row,column), where each pair represents
-	 * a square that this piece can move to, according to its rules of movement
+	 * Compute the squares that this piece can move to on the board
 	 */
 	@Override
 	public List<Pair> getMoves() {
@@ -46,12 +43,11 @@ public class Bishop extends Piece {
 		}
 		// If a Bishop is pinned by a Rook, the Bishop can't move at all
 		else if (pinner instanceof Rook){
-			return new ArrayList<Pair>();
+			return new ArrayList<>();
 		}
 		// Otherwise, it's pinned by a Bishop or Queen, in which case it's possible
 		// that it can move, if the pinner is in the same diagonal as this Bishop
 		else {
-
 			// Determine where the pinner is in relation to this Bishop;
 			// above, below, or on the same row
 			int rowIncrement = sign(pinner.getRow() - this.getRow());
@@ -65,7 +61,7 @@ public class Bishop extends Piece {
 			// along this diagonal between the Bishop and the pinner (inclusive
 			// on the latter end), and in the other direction between the Bishop
 			// and its King
-			List<Pair> moves = new ArrayList<Pair>();
+			List<Pair> moves = new ArrayList<>();
 			
 			int checkRow = this.getRow() + rowIncrement;
 			int checkColumn = this.getColumn() + columnIncrement;
@@ -95,7 +91,7 @@ public class Bishop extends Piece {
 				checkRow += rowIncrement;
 				checkColumn += columnIncrement;
 			}
-			
+
 			return board.getLegal(moves, colour);
 		}
 	}
@@ -126,7 +122,7 @@ public class Bishop extends Piece {
 	 * according to the rules of Chess governing the movement of a Bishop
 	 */
 	private List<Pair> getNormalMoves() {
-		List<Pair> moves = new ArrayList<Pair>();
+		List<Pair> moves = new ArrayList<>();
 		
 		// Iterate along all 4 diagonals until the edge of the
 		// board or another piece is reached
@@ -162,24 +158,25 @@ public class Bishop extends Piece {
 		
 		return moves;
 	}
-	
+
 	/**
-	 * Compute all squares that this piece is PROTECTING. A protected
+	 * Compute and return all squares that this piece is PROTECTING. A protected
 	 * square is a square that this piece is preventing the enemy king
 	 * from moving to. In other words, it's a square that the enemy
-	 * king can't move to, lest he put himself in check.
-	 * 
+	 * king can't move to, lest he put himself in check, but that he
+	 * otherwise might be able to move to.
+	 *
 	 * For example, this might be a square the piece can move to,
 	 * or a square occupied by an allied piece who this piece is protecting,
 	 * or it might be a square diagonal to a pawn (the pawn can't move there,
 	 * but it's neither can the enemy king, thanks to the pawn).
-	 * 
+	 *
 	 * @return A list of Pairs, where each pair represents a square protected by
 	 * this piece
 	 */
 	@Override
 	public List<Pair> getProtectedSquares() {
-		List<Pair> protectedSquares = new ArrayList<Pair>();
+		List<Pair> protectedSquares = new ArrayList<>();
 		
 		// Iterate along all 4 diagonals until the edge of the
 		// board or another piece is reached
@@ -216,7 +213,7 @@ public class Bishop extends Piece {
 			checkRow = row;
 			checkColumn = column;
 		}
-		
+
 		return protectedSquares;
 	}
 	
@@ -230,25 +227,25 @@ public class Bishop extends Piece {
 	public String toString () {
 		return (colour == Colour.WHITE) ? "B" : "b";
 	}
-	
+
 	/**
-	 * Compute whether or not this piece is giving check to the enemy King. Note that this is
-	 * a little subtle. The piece does not have to actually be able to capture the enemy King
-	 * to be attacking it. As an example, a pinned piece that can't actually move at all can still
-	 * be giving check. To demonstrate:
-	 * 
+	 * Compute and return whether or not this piece is giving check to the enemy King. Note that
+	 * this is a little subtle. The piece does not have to actually be able to capture the enemy
+	 * King to be attacking it. As an example, a pinned piece that can't actually move at all
+	 * can still be giving check. To demonstrate:
+	 *
 	 * kXX
 	 * XrX
 	 * XXB
 	 * XKX
-	 * 
+	 *
 	 * Here, the black Rook is pinned by the white Bishop, and can't move at all. That is, its
 	 * getMoves() would return an empty list. But white is still in check because the black
-	 * Rook and white King are in the same column. 
+	 * Rook and white King are in the same column.
 	 * @return true if and only if this piece is giving check to the enemy king
 	 */
 	@Override
-	public boolean isCheckingKing() {		
+	public boolean isCheckingKing() {
 		// Iterate along all 4 diagonals until the edge of the
 		// board or another piece is reached
 		int[] row_increments =    {1,  1, -1, -1};
@@ -285,7 +282,7 @@ public class Bishop extends Piece {
 			checkRow = row;
 			checkColumn = column;
 		}
-		
+
 		return false;
 	}
 }

@@ -1,7 +1,6 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class King extends Piece {
 	 */
 	@Override
 	public List<Pair> getMoves() {
-		List<Pair> moves = new ArrayList<Pair>();
+		List<Pair> moves = new ArrayList<>();
 		Colour enemy_colour = (colour == Colour.WHITE) ? Colour.BLACK : Colour.WHITE;
 		
 		// We pick the King up from the board, temporarily, to get a complete
@@ -57,47 +56,46 @@ public class King extends Piece {
 		
 		// We can put the King back on the board now
 		board.restore(this);
-		
+
+		// First we will get all the squares that the King can move to if we ignore the
+		// enemy pieces, then we'll remove all squares being protected by an enemy.
 		int[] row_offsets = {-1,1};
 		int[] column_offsets= {-1,0,1};
+		int new_row, new_column;
 		
 		// Check the rows in front of and behind the King
 		for(int row_offset : row_offsets) {
 			for(int column_offset : column_offsets) {
-				// The King can move to a square if
-				// 1) It is on the board
-				// 2) It does not hold an ally
-				// 3) It is not being protected by the enemy
-				if(board.isMovable(this.row+row_offset, this.column+column_offset, this.colour)
-				&& Collections.binarySearch(enemyProtectedSquares, new Pair(this.row+row_offset, this.column+column_offset)) < 0) {
-					moves.add(new Pair(this.row + row_offset, this.column + column_offset));
+				new_row = this.row + row_offset;
+				new_column = this.column + column_offset;
+
+				if(board.isMovable(new_row, new_column, this.colour)) {
+					moves.add(new Pair(new_row, new_column));
 				}
 			}
 		}
-		
-		
+
 		// Check the square in the same row and to the right of the King
-		if(board.isMovable(this.row, this.column+1, this.colour)
-		&& Collections.binarySearch(enemyProtectedSquares, new Pair(this.row, this.column+1)) < 0) {
+		if(board.isMovable(this.row, this.column + 1, this.colour)) {
 			moves.add(new Pair(this.row, this.column + 1));
 		}
 		
 		// Check the square in the same row and to the left of the King
-		if(board.isMovable(this.row, this.column-1, this.colour)
-		&& Collections.binarySearch(enemyProtectedSquares, new Pair(this.row, this.column-1)) < 0) {
+		if(board.isMovable(this.row, this.column - 1, this.colour)) {
 			moves.add(new Pair(this.row, this.column - 1));
 		}
 		
 		// If the King can castle, the convention in chess apps is to include the square that the King
 		// ends up on after the castle as a square the King can move to
 		if(board.canKingsideCastle(colour)) {
-			moves.add(new Pair(this.getRow(), this.getColumn()+2));
+			moves.add(new Pair(this.getRow(), this.getColumn() + 2));
 		}
 		
 		if(board.canQueensideCastle(colour)) {
 			moves.add(new Pair(this.getRow(), this.getColumn() - 2));
 		}
-		
+
+		moves.removeAll(enemyProtectedSquares);
 		return moves;
 	}
 	
@@ -132,7 +130,7 @@ public class King extends Piece {
 	 */
 	@Override
 	public List<Pair> getProtectedSquares() {
-		List<Pair> protected_squares = new ArrayList<Pair>();
+		List<Pair> protected_squares = new ArrayList<>();
 		
 		int[] row_offsets = {-1,1};
 		int[] column_offsets= {-1,0,1};
@@ -163,7 +161,7 @@ public class King extends Piece {
 		 || board.isEmpty(this.row, this.column-1)) {
 			protected_squares.add(new Pair(this.row, this.column - 1));
 		}
-		
+
 		return protected_squares;
 	}
 	

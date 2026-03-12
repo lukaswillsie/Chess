@@ -1,7 +1,7 @@
 package com.lukaswillsie.chess.engine;
 
 
-import com.lukaswillsie.chess.*;
+import com.lukaswillsie.chess.logic.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -197,7 +197,7 @@ public class Engine {
                 }
 
                 Pair square = piece.getSquare();
-                for(Pair dest : piece.getMoves()) {
+                for(Pair dest : piece.getMoves(true)) {
                     moves.add(new Pair[]{square, dest});
                 }
             }
@@ -227,14 +227,14 @@ public class Engine {
         Evaluation alpha = Evaluation.winEvaluation(Colour.BLACK);
         Evaluation beta = Evaluation.winEvaluation(Colour.WHITE);
         alphaBeta(Colour.WHITE, testBoard, 0, 2, alpha, beta);
-        timeTest(3);
+        timeTest(4);
     }
 
     private static void timeTest(int maxDepth) throws FileNotFoundException {
         Board testBoard = new Board();
         testBoard.initialize(new Scanner(new File("com/lukaswillsie/chess/new_board.txt")));
-        long[] baseTimes = new long[5];
-        long[] alphaBetaTimes = new long[5];
+        long[] baseTimes = new long[maxDepth];
+        long[] alphaBetaTimes = new long[maxDepth];
         long start, end;
         Evaluation alpha = Evaluation.winEvaluation(Colour.BLACK);
         Evaluation beta = Evaluation.winEvaluation(Colour.WHITE);

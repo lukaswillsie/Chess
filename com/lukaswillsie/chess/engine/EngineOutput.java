@@ -1,6 +1,6 @@
 package com.lukaswillsie.chess.engine;
 
-import com.lukaswillsie.chess.Pair;
+import com.lukaswillsie.chess.logic.Pair;
 
 public class EngineOutput {
     public Evaluation getEvaluation() {

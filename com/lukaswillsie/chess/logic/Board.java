@@ -1,4 +1,4 @@
-package com.lukaswillsie.chess;
+package com.lukaswillsie.chess.logic;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -204,7 +204,7 @@ public class Board implements Iterable<Piece[]> {
 			}
 			
 			// If the destination is one of piece's valid moves
-			if(piece.getMoves().contains(destSquare)) {
+			if(piece.getMoves(true).contains(destSquare)) {
 				// Check if the given move is being made by a King
 				if(piece instanceof King) {
 					// A kingside castle is characterized by a two-square
@@ -293,7 +293,7 @@ public class Board implements Iterable<Piece[]> {
 					if(destSquare.first() - srcSquare.first() == 2 * direction) {
 						// The new en passant square is the one between where the piece used
 						// to be and where it is now
-						this.enPassant = new Pair(srcSquare.first()+direction, srcSquare.second());
+						this.enPassant = new Pair(srcSquare.first+direction, srcSquare.second);
 					}
 					// If a pawn has reached the back row and needs to be promoted
 					else if((piece.getColour() == Colour.WHITE && piece.getRow() == 7)
@@ -304,7 +304,7 @@ public class Board implements Iterable<Piece[]> {
 				}
 				
 				// Flip turn
-				this.turn = (this.turn == Colour.WHITE) ? Colour.BLACK : Colour.WHITE;
+				this.turn = this.turn.flip();
 				
 				return 0;
 			}
@@ -474,6 +474,19 @@ public class Board implements Iterable<Piece[]> {
 	 */
 	public Piece getPiece(int row, int column) {
 		return board[row][column];
+	}
+
+	/**
+	 * Access a particular square on the board
+	 *
+	 * Precondition: row and column satisfy validSquare(row, column). Equivalently, both row and
+	 * column are greater than or equal to 0 and less than or equal to 7.
+	 *
+	 * @param pair - A Pair representing the square to access
+	 * @return The piece at the specified square, or null if the square is empty
+	 */
+	public Piece getPiece(Pair pair) {
+		return board[pair.first()][pair.second()];
 	}
 	
 	/**
@@ -770,7 +783,7 @@ public class Board implements Iterable<Piece[]> {
 		List<Piece> pieceList = (colour == Colour.WHITE) ? this.blackPieces : this.whitePieces;
 		
 		for(Piece piece : pieceList) {
-			if(piece.isCheckingKing()) {
+			if(piece.isCheckingKing(true)) {
 				return true;
 			}
 		}
@@ -1132,7 +1145,7 @@ public class Board implements Iterable<Piece[]> {
 		// Simply check each piece in the enemy piece list to see if it's checking
 		// the king
 		for(Piece enemy : enemyPieces) {
-			if(enemy.isCheckingKing()) {
+			if(enemy.isCheckingKing(true)) {
 				checkers.add(enemy);
 			}
 		}
@@ -1334,7 +1347,7 @@ public class Board implements Iterable<Piece[]> {
 		}
 		
 		for(Piece piece : pieceList) {
-			pieceMoves = piece.getMoves();
+			pieceMoves = piece.getMoves(true);
 			for(Pair pair : pieceMoves) {
 				insert(moves, pair);
 			}
@@ -1389,7 +1402,7 @@ public class Board implements Iterable<Piece[]> {
 		}
 		
 		for(Piece piece : pieceList) {
-			pieceProtectedSquares = piece.getProtectedSquares();
+			pieceProtectedSquares = piece.getProtectedSquares(true);
 			for(Pair pair : pieceProtectedSquares) {
 				insert(protected_squares, pair);
 			}
